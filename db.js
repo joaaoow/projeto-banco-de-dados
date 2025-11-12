@@ -10,8 +10,8 @@ export const mysqlPool = mysql.createPool({
 });
 
 // MongoDB Atlas
-const mongoURL = 'mongodb+srv://admin:2025#1090@eventosdb.a4hlxhw.mongodb.net/?appName=eventosDB'
-mongoose.connect(mongoURL, {
+const url_mongo = (process.env.mongoURL)
+mongoose.connect(url_mongo, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
