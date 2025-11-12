@@ -4,6 +4,8 @@ const router = express.Router()
 const db = require('../db.js')
 const e = require('express')
 
+// CRUD de Usuários
+
 //Cadastrar usuário
 router.post('/', (req, res) => {
     const {nome, email, senha, tipo} = req.body;
