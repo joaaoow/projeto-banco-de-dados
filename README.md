@@ -8,7 +8,6 @@ Sistema Web criado para simular um site de eventos educacionais sobre programaç
 ## Ferramentas Front:
 - HTML e CSS:
     - Ferramenta de marcação mais comum para desenvolvimento front-end.
-<br>
 
 - JavaScript:
     - Ferramenta utilizada para criação da lógica do front-end
