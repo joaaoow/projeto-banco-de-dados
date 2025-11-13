@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
         if(err) {
             if (err.code == 'ER_DUP_ENTRY') {
                 return res.status(409).json({
-                    erro: 'Email já cadastrado.'
+                    erro: 'Usuário já cadastrado.'
                 });
             }
             return res.status(500).json({erro: err.message});
