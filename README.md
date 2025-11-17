@@ -10,7 +10,10 @@ Sistema completo de gestão de eventos acadêmicos com autenticação JWT, banco
 
 
 
-Sistema desenvolvido para o **Trabalho Final - Laboratório de Banco de Dados**, implementando todos os requisitos acadêmicos.## 📋 Sumário
+Sistema desenvolvido por GRUPO 1
+
+
+## 📋 Sumário
 
 
 
@@ -525,7 +528,7 @@ curl http://localhost:3000/eventos \
 
 ## 👥 Autores
 
-- Equipe do Trabalho Final - Laboratório de Banco de Dados
+- Equipe 1 - Laboratório de Banco de Dados
 
 ---
 
