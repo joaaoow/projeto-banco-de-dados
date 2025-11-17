@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eventos — Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header-inner">
+        <h1 class="logo">Eventos<span class="accent">Pro</span></h1>
+        <nav>
+          <a href="#hero">Início</a>
+          <a href="#eventos">Eventos</a>
+          <a href="#contato">Contato</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="hero" class="hero">
+        <div class="container hero-inner">
+          <div>
+            <h2>Aprenda, conecte-se e compartilhe conhecimento</h2>
+            <p class="lead">Plataforma de eventos para programadores — participe, envie materiais e dê feedback.</p>
+            <div class="actions">
+              <a class="btn primary" href="#eventos">Explorar eventos</a>
+              <a class="btn ghost" href="#contato">Entrar em contato</a>
+            </div>
+          </div>
+          <div class="hero-card">
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='%23ffffff' rx='12'/></svg>" alt="Ilustração" />
+          </div>
+        </div>
+      </section>
+
+      <section id="eventos" class="section">
+        <div class="container">
+          <h3>Próximos eventos</h3>
+          <div id="event-list" class="grid"></div>
+        </div>
+      </section>
+
+      <section id="contato" class="section small">
+        <div class="container">
+          <h3>Contato</h3>
+          <p>Para dúvidas e testes use as rotas da API (ex.: <code>/eventos</code>, <code>/usuarios</code>).</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">© <span id="year"></span> EventosPro — Projeto de exemplo</div>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+  </html>

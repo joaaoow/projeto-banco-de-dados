@@ -1,22 +1,27 @@
-import mysql from 'mysql2/promise';
-import mongoose from 'mongoose';
+const mysql = require('mysql2');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-// MySql
-export const mysqlPool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: eventosdb
+// MySQL pool (callback-style query compatible)
+const mysqlPool = mysql.createPool({
+    host: process.env.MYSQL_HOST || 'localhost',
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'eventosdb',
+    waitForConnections: true,
+    connectionLimit: parseInt(process.env.MYSQL_CONNECTION_LIMIT, 10) || 10,
+    queueLimit: 0
 });
 
-// MongoDB Atlas
-const url_mongo = (process.env.mongoURL)
-mongoose.connect(url_mongo, {
+// MongoDB (Atlas or local)
+const mongoUrl = process.env.MONGO_URL || process.env.mongoURL || 'mongodb://localhost:27017/eventosdb';
+mongoose.connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
-.then (() => console.log('Conectado ao MongoDB Atlas'))
-.catch (err => console.error('Erro ao conectar MongoDB: ', err));
+}).then(() => console.log('Conectado ao MongoDB'))
+.catch(err => console.error('Erro ao conectar MongoDB:', err));
 
-
-export const mongo = mongoose;
+// Exporta pool MySQL como o módulo principal para compatibilidade com código existente
+module.exports = mysqlPool;
+// Anexa mongoose para quem precisar do cliente Mongo
+module.exports.mongo = mongoose;

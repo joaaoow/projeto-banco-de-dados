@@ -9,37 +9,37 @@ router.post('/', (req, res) => {
     const { titulo, descricao, data_evento, vagas, organizador_id, categoria_id } = req.body;
 
     // Validação
-    if(!titulo || !descricao || !data_evento || !vagas || !organizador_id || !categoria_id){
+    if(!titulo || !descricao || !data_evento || !vagas || !organizador_id){
         return res.status(400).json({
-            erro: 'Titulo, data, vagas e organizador são obrigatórios.'
+            erro: 'Título, data, vagas e organizador são obrigatórios.'
         });
     }
 
     // Verifica se o organizador existe
     db.query('SELECT id, tipo FROM usuarios WHERE id = ?', [organizador_id], (err, results) => {
-        if(err) return res.status(500).json({erro: err.message})
+        if(err) return res.status(500).json({erro: err.message});
 
-            if (results.length === 0){
-                return res.status(4040).json({erro: 'Organizador não encontrado'});
-            }
+        if (!results || results.length === 0){
+            return res.status(404).json({erro: 'Organizador não encontrado'});
+        }
 
-            if (results[0].tipo !== 'organizador'){
-                return res.status(4040).json({erro: 'Usuário não encontrado'});
-            }
+        if (results[0].tipo !== 'organizador'){
+            return res.status(400).json({erro: 'Usuário não é organizador'});
+        }
 
-            const query = 'INSERT INTO eventos (titulo, descricao, data_evento, vagas, organizador_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO eventos (titulo, descricao, data_evento, vagas, organizador_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?)';
 
-            db.query(query, [titulo, descricao, vagas, organizador_id, categoria_id], (err, results) => {
-                if (err) return res.status(500).json({erro: err.message});
+        db.query(query, [titulo, descricao, data_evento, vagas, organizador_id, categoria_id], (err, insertRes) => {
+            if (err) return res.status(500).json({erro: err.message});
 
-                res.status(201).json({
-                    mensagem: 'Evento criado com sucesso',
-                    id: results.insertId,
-                    titulo,
-                    data_evento,
-                    vagas
-                });
+            res.status(201).json({
+                mensagem: 'Evento criado com sucesso',
+                id: insertRes.insertId,
+                titulo,
+                data_evento,
+                vagas
             });
+        });
     });
 });
 
@@ -57,8 +57,8 @@ router.get('/', (req, res) => {
     });
 });
 
-// Buscar por ID
-router.get('/:id', (res, req) => {
+// Buscar por ID (definida depois de rotas mais específicas)
+router.get('/:id', (req, res) => {
     const { id } = req.params;
 
     const query = `
@@ -75,9 +75,9 @@ router.get('/:id', (res, req) => {
     db.query(query, [id], (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
 
-        if (results.length === 0){
+        if (!results || results.length === 0){
             return res.status(404).json({
-                erro: 'Evento não econtrado.'
+                erro: 'Evento não encontrado.'
             });
         }
 
@@ -86,6 +86,7 @@ router.get('/:id', (res, req) => {
 });
 
 // Eventos disponíveis(com vagas)
+// Eventos disponíveis (com vagas)
 router.get('/disponiveis/lista', (req, res) => {
     const query = `
     SELECT 
@@ -103,7 +104,7 @@ router.get('/disponiveis/lista', (req, res) => {
     HAVING vagas_disponiveis > 0
     ORDER BY e.data_evento ASC
     `;
-    db.query(query, (req, res) => {
+    db.query(query, (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
 
         res.status(200).json({
@@ -113,6 +114,7 @@ router.get('/disponiveis/lista', (req, res) => {
     });
 });
 
+// Eventos por organizador 
 // Eventos por organizador 
 router.get('/organizador/:organizador_id', (req, res) => {
     const { organizador_id } = req.params;
@@ -143,7 +145,7 @@ router.put('/:id', (req, res) => {
     const { titulo, descricao, data_evento, vagas, categoria_id} = req.body;
 
     if(!titulo || !data_evento || !vagas) {
-        return res._construct(400).json({
+        return res.status(400).json({
             erro: 'Título, data e vagas são obrigatórios.'
         });
     }

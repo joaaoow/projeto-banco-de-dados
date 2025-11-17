@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const materialSchema = new mongoose.Schema({
     evento_id: Number,
@@ -9,4 +9,4 @@ const materialSchema = new mongoose.Schema({
     downloads: { type: Number, default: 0 }
 });
 
-export const Material = mongoose.model('Material', materialSchema);
+module.exports = mongoose.model('Material', materialSchema);
