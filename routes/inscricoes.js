@@ -9,7 +9,7 @@ router.post('/', (req, res) => {
     const { usuario_id, evento_id } = req.body;
 
     if (!usuario_id || !evento_id) {
-        return res.status(400).json({erro: 'Usuário e evento são obrigatótarios'});
+        return res.status(400).json({erro: 'Usuário e evento são obrigatórios'});
     }
 
     // verifica se o evento possui e existe vagas
@@ -106,13 +106,11 @@ router.put('/:id/cancelar', (req, res) => {
 router.patch('/:id/presenca', (req, res) => {
     const { id } = req.params;
 
-    db.query('UPDATE inscricoes SET statys = "presente WHERE id = ?', [id], (err, results) => {
+    db.query('UPDATE inscricoes SET status = "presente" WHERE id = ?', [id], (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
-        if(results.affectedRows === 0) return res.status(404).json({erro: 'inscrição não encontrada'});
+        if(results.affectedRows === 0) return res.status(404).json({erro: 'Inscrição não encontrada'});
 
-        res.status(200).json({
-            mensagem: 'Presença confirmada'
-        });
+        res.status(200).json({ mensagem: 'Presença confirmada' });
     });
 });
 

@@ -46,15 +46,15 @@ router.post('/', (req, res) => {
 
 // Listar todos os usuários
 router.get('/', (req, res) => {
-    const query = 'SELECT id, nome, email, tipo FROM usuario ORDER BY nome';
+    const query = 'SELECT id, nome, email, tipo FROM usuarios ORDER BY nome';
 
     db.query(query, (err, results) => {
         if (err) {
-            return res.status(500).json({erro: err.message})
+            return res.status(500).json({erro: err.message});
         }
 
         res.status(200).json({
-            total: results.lenght,
+            total: results.length,
             usuarios: results
         });
     });
@@ -68,16 +68,14 @@ router.get('/:id', (req, res) => {
 
     db.query(query, [id], (err, results) => {
         if (err) {
-            return res.status(500).json({erro: err.message})
+            return res.status(500).json({erro: err.message});
         }
 
-        if (results.lenght == 0) {
-            return res.status(404).json({
-                erro: 'Usuário não encontrado'
-            });
+        if (!results || results.length === 0) {
+            return res.status(404).json({ erro: 'Usuário não encontrado' });
         }
 
-        res.status(200).json(results[0])
+        res.status(200).json(results[0]);
     });
 });
 
@@ -104,17 +102,13 @@ router.put('/:id', (req, res) => {
     db.query(query, [nome, email, tipo, id], (err, results) => {
         if (err){
             if(err.code == 'ER_DUP_ENTRY') {
-                return res.status(409).json({
-                    erro: 'Email já está em uso por outro usuário.'
-                });
+                return res.status(409).json({ erro: 'Email já está em uso por outro usuário.' });
             }
-        return res.status(500).json({erro: err.message})
+            return res.status(500).json({erro: err.message});
         }
 
-        if (results.affecttedRows === 0){
-            return res.status(404).json({
-                erro: 'Usuário não encontrado'
-            });
+        if (!results || results.affectedRows === 0){
+            return res.status(404).json({ erro: 'Usuário não encontrado' });
         }
 
         res.status(200).json ({
@@ -144,10 +138,8 @@ router.patch('/:id/senha', (req, res) => {
             return res.status(500).json({erro: err.message});
         }
 
-        if (results.lenght === 0){
-            return res.status(404).json({
-                erro: 'Usuário não encontrado.'
-            });
+        if (!results || results.length === 0){
+            return res.status(404).json({ erro: 'Usuário não encontrado.' });
         }
 
         if(results[0].senha !== senhaAtual) {
@@ -157,12 +149,10 @@ router.patch('/:id/senha', (req, res) => {
         // Atualizar para nova senha
         db.query('UPDATE usuarios SET senha = ? WHERE id = ?', [novaSenha, id], (err, results) => {
             if(err) {
-                return res.status(500).json({erro: err.message})
+                return res.status(500).json({erro: err.message});
             }
 
-            res.status(200).json({
-                mensagem: 'Senha atualizada com sucesso.'
-            });
+            res.status(200).json({ mensagem: 'Senha atualizada com sucesso.' });
         });
     });
 });
@@ -174,24 +164,18 @@ router.delete('/:id', (req, res) => {
     const query = 'DELETE FROM usuarios WHERE id = ?';
 
     db.query(query, [id], (err, results) => {
-            if(err){
-                if(err.code === 'ER_ROW_IS_REFERENCED_2') {
+        if(err){
+            if(err.code === 'ER_ROW_IS_REFERENCED_2') {
                 return res.status(409).json({erro: 'Não foi possível deletar. Usuário possui eventos/inscrições associadas.'});
             }
             return res.status(500).json({erro: err.message});
         }
 
-        // Verifica se há restrições de chave estrangeira
-        if(results.affecttedRows === 0){
-            return res.status(404).json({
-                erro: 'Usuário não encontrado.'
-            });
+        if(!results || results.affectedRows === 0){
+            return res.status(404).json({ erro: 'Usuário não encontrado.' });
         }
 
-        res.status(200).json({
-            mensagem: 'Usuário deletado com sucesso.',
-            id
-        });
+        res.status(200).json({ mensagem: 'Usuário deletado com sucesso.', id });
     });
 });
 
@@ -212,11 +196,7 @@ router.get('/tipo/:tipo', (req, res) => {
             return res.status(500).json({erro: err.message});
         }
 
-        res.status(200).json({
-            tipo,
-            total: results.lenght,
-            usuarios: results
-        });
+        res.status(200).json({ tipo, total: results.length, usuarios: results });
     });
 });
 

@@ -5,7 +5,7 @@ const Feedback = require('../models/mongo/feedbackModel.js')
 // CRUD Feedbacks
 
 // Cria novo feedback
-router.post('/feedbacks', async(req, res) => {
+router.post('/', async(req, res) => {
     try{
         const { evento_id, usuario_id, nota, comentario, tags } = req.body;
         if(!evento_id || !usuario_id || !nota)
@@ -19,12 +19,12 @@ router.post('/feedbacks', async(req, res) => {
             data: novoFeedback
         });
     } catch (err){
-        
+        return res.status(500).json({ erro: err.message });
     }
 });
 
-// Listra todos os feedbacks
-router.get('/feedbacks', async(req,res) => {
+// Lista todos os feedbacks
+router.get('/', async(req,res) => {
     try{
         const feedbacks = await Feedback.find();
         res.status(200).json({success: true, data: feedbacks});
@@ -66,7 +66,7 @@ router.get('/evento/:evento_id/media', async(req, res) => {
 });
 
 // Atualizar comentário ou nota
-router.put('/feedbacks/:id', async(req, res) => {
+router.put('/:id', async(req, res) => {
     try{
         const feedback = await Feedback.findByIdAndUpdate(req.params.id, req.body, { new: true });
 

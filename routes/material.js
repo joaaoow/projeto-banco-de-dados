@@ -5,7 +5,7 @@ const Material = require('../models/mongo/materialModel.js')
 // CRUD Material
 
 // Criar material
-router.put('/materiais', async(req, res) => {
+router.post('/', async(req, res) => {
     try{
         const { evento_id, tipo, titulo, arquivo, links, downloads } = req.body;
         
@@ -33,7 +33,7 @@ router.put('/materiais', async(req, res) => {
 });
 
 // Listar materiais
-router.get('/materiais', async (req, res) => {
+router.get('/', async (req, res) => {
     try{
         const materiais = await Material.find(); // Espera o Mongo fazer a busca
         res.status(200).json({
@@ -49,7 +49,7 @@ router.get('/materiais', async (req, res) => {
 });
 
 // Buscar material por evento
-router.get('/materiais/evento/:evento_id', async (req, res) => {
+router.get('/evento/:evento_id', async (req, res) => {
     try{
         const materiais = await Material.find({ evento_id: req.params.evento_id})
         res.status(200).json({
@@ -61,7 +61,7 @@ router.get('/materiais/evento/:evento_id', async (req, res) => {
     }
 });
 
-router.put('/materiais/:id/download', async(req, res) => {
+router.put('/:id/download', async(req, res) => {
     try{
         const material = await Material.findByIdAndUpdate(
             req.params.id,

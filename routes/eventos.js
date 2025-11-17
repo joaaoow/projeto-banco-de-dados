@@ -9,9 +9,9 @@ router.post('/', (req, res) => {
     const { titulo, descricao, data_evento, vagas, organizador_id, categoria_id } = req.body;
 
     // Validação
-    if(!titulo || !descricao || !data_evento || !vagas || !organizador_id){
+    if(!titulo || !descricao || !data_evento || !vagas || !organizador_id || !categoria_id){
         return res.status(400).json({
-            erro: 'Título, data, vagas e organizador são obrigatórios.'
+            erro: 'Titulo, data, vagas e organizador são obrigatórios.'
         });
     }
 
@@ -24,21 +24,16 @@ router.post('/', (req, res) => {
         }
 
         if (results[0].tipo !== 'organizador'){
-            return res.status(400).json({erro: 'Usuário não é organizador'});
+            return res.status(403).json({erro: 'Usuário não é organizador'});
         }
 
         const query = 'INSERT INTO eventos (titulo, descricao, data_evento, vagas, organizador_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?)';
 
-        db.query(query, [titulo, descricao, data_evento, vagas, organizador_id, categoria_id], (err, insertRes) => {
+        // Note: keep parameter order matching the INSERT columns
+        db.query(query, [titulo, descricao, data_evento, vagas, organizador_id, categoria_id], (err, results) => {
             if (err) return res.status(500).json({erro: err.message});
 
-            res.status(201).json({
-                mensagem: 'Evento criado com sucesso',
-                id: insertRes.insertId,
-                titulo,
-                data_evento,
-                vagas
-            });
+            res.status(201).json({ mensagem: 'Evento criado com sucesso', id: results.insertId, titulo, data_evento, vagas });
         });
     });
 });
@@ -57,7 +52,7 @@ router.get('/', (req, res) => {
     });
 });
 
-// Buscar por ID (definida depois de rotas mais específicas)
+// Buscar por ID
 router.get('/:id', (req, res) => {
     const { id } = req.params;
 
@@ -76,16 +71,13 @@ router.get('/:id', (req, res) => {
         if (err) return res.status(500).json({erro: err.message});
 
         if (!results || results.length === 0){
-            return res.status(404).json({
-                erro: 'Evento não encontrado.'
-            });
+            return res.status(404).json({ erro: 'Evento não encontrado.' });
         }
 
         res.status(200).json(results[0]);
     });
 });
 
-// Eventos disponíveis(com vagas)
 // Eventos disponíveis (com vagas)
 router.get('/disponiveis/lista', (req, res) => {
     const query = `
@@ -107,14 +99,10 @@ router.get('/disponiveis/lista', (req, res) => {
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
 
-        res.status(200).json({
-            total: results.length,
-            eventos: results
-        });
+        res.status(200).json({ total: results.length, eventos: results });
     });
 });
 
-// Eventos por organizador 
 // Eventos por organizador 
 router.get('/organizador/:organizador_id', (req, res) => {
     const { organizador_id } = req.params;
@@ -145,9 +133,7 @@ router.put('/:id', (req, res) => {
     const { titulo, descricao, data_evento, vagas, categoria_id} = req.body;
 
     if(!titulo || !data_evento || !vagas) {
-        return res.status(400).json({
-            erro: 'Título, data e vagas são obrigatórios.'
-        });
+        return res.status(400).json({ erro: 'Título, data e vagas são obrigatórios.' });
     }
 
     const query = `
