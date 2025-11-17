@@ -8,10 +8,12 @@ const db = require('../db.js');
 router.post('/', (req, res) => {
     const { titulo, descricao, data_evento, vagas, organizador_id, categoria_id } = req.body;
 
-    // Validação
-    if(!titulo || !descricao || !data_evento || !vagas || !organizador_id || !categoria_id){
+    console.log('📝 Criando evento:', { titulo, descricao, data_evento, vagas, organizador_id, categoria_id });
+
+    // Validação dos campos obrigatórios
+    if(!titulo || !data_evento || !vagas || !organizador_id){
         return res.status(400).json({
-            erro: 'Titulo, data, vagas e organizador são obrigatórios.'
+            erro: 'Título, data, vagas e organizador são obrigatórios.'
         });
     }
 
@@ -27,27 +29,61 @@ router.post('/', (req, res) => {
             return res.status(403).json({erro: 'Usuário não é organizador'});
         }
 
-        const query = 'INSERT INTO eventos (titulo, descricao, data_evento, vagas, organizador_id, categoria_id) VALUES (?, ?, ?, ?, ?, ?)';
-
-        // Note: keep parameter order matching the INSERT columns
-        db.query(query, [titulo, descricao, data_evento, vagas, organizador_id, categoria_id], (err, results) => {
+        // Gera ID customizado usando a function
+        db.query('SELECT gerar_id_evento() as id', (err, idResult) => {
             if (err) return res.status(500).json({erro: err.message});
 
-            res.status(201).json({ mensagem: 'Evento criado com sucesso', id: results.insertId, titulo, data_evento, vagas });
+            const eventoId = idResult[0].id;
+            
+            // Inserir com vagas_disponiveis = vagas e status = 'aberto'
+            const query = `
+                INSERT INTO eventos 
+                (id, titulo, descricao, data_evento, vagas, vagas_disponiveis, organizador_id, categoria_id, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'aberto')
+            `;
+
+            db.query(query, [eventoId, titulo, descricao || null, data_evento, vagas, vagas, organizador_id, categoria_id || null], (err, results) => {
+                if (err) return res.status(500).json({erro: err.message});
+
+                res.status(201).json({ 
+                    mensagem: 'Evento criado com sucesso', 
+                    id: eventoId, 
+                    titulo, 
+                    data_evento, 
+                    vagas 
+                });
+            });
         });
     });
 });
 
-// Listar todos os eventos
+// Listar todos os eventos (usando view)
 router.get('/', (req, res) => {
-    const query = `SELECT e.id, e.titulo, e.descricao, e.data_evento, e.vagas, e.categoria_id, u.nome as organizador, u.id as organizador_id, (SELECT COUNT(*) FROM inscricoes WHERE evento_id = e.id AND status = 'confirmado') as inscritos FROM eventos e INNER JOIN usuarios u ON e.organizador_id = u.id ORDER BY e.data_evento DESC`;
+    const query = 'SELECT * FROM vw_eventos_completos ORDER BY data_evento DESC';
     
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
 
+        // Mapear os nomes das colunas da view para o formato esperado pelo frontend
+        const eventos = results.map(evento => ({
+            id: evento.id,
+            titulo: evento.titulo,
+            descricao: evento.descricao,
+            data_evento: evento.data_evento,
+            vagas: evento.vagas,
+            vagas_disponiveis: evento.vagas_disponiveis,
+            status: evento.status,
+            organizador: evento.organizador_nome,
+            organizador_email: evento.organizador_email,
+            categoria: evento.categoria_nome,
+            inscritos: evento.inscricoes_confirmadas || 0,
+            total_inscricoes: evento.total_inscricoes || 0,
+            taxa_ocupacao: evento.taxa_ocupacao || 0
+        }));
+
         res.status(200).json({
-            total: results.length,
-            eventos: results
+            total: eventos.length,
+            eventos: eventos
         });
     });
 });
@@ -74,7 +110,18 @@ router.get('/:id', (req, res) => {
             return res.status(404).json({ erro: 'Evento não encontrado.' });
         }
 
-        res.status(200).json(results[0]);
+        // Adicionar taxa de ocupação usando a função do banco
+        const evento = results[0];
+        
+        db.query('SELECT calcular_taxa_ocupacao(?) as taxa_ocupacao', [id], (err, taxaResults) => {
+            if (err) {
+                // Se houver erro, retorna sem a taxa
+                return res.status(200).json(evento);
+            }
+
+            evento.taxa_ocupacao = taxaResults[0].taxa_ocupacao;
+            res.status(200).json(evento);
+        });
     });
 });
 
@@ -103,25 +150,44 @@ router.get('/disponiveis/lista', (req, res) => {
     });
 });
 
-// Eventos por organizador 
+// Eventos por organizador (usando procedure)
 router.get('/organizador/:organizador_id', (req, res) => {
     const { organizador_id } = req.params;
 
-    const query = `
-    SELECT 
-        e.*,
-        (SELECT COUNT(*) FROM inscricoes WHERE evento_id = e.id AND status = 'confirmado') as inscritos
-    FROM eventos e
-    WHERE e.organizador_id = ?
-    ORDER BY e.data_evento DESC
-    `;
+    console.log('🔍 Buscando eventos do organizador:', organizador_id);
 
-    db.query(query, [organizador_id], (err, results) => {
-        if (err) return res.status(500).json({erro: err.message});
+    db.query('CALL relatorio_eventos_organizador(?)', [organizador_id], (err, results) => {
+        if (err) {
+            console.error('❌ Erro na procedure:', err.message);
+            return res.status(500).json({erro: err.message});
+        }
+
+        // Procedures retornam array de arrays
+        const eventos = results[0];
+        
+        console.log('📊 Eventos encontrados:', eventos.length);
+        console.log('📋 Dados:', eventos);
+
+        // Mapear os campos para o formato esperado pelo frontend
+        const eventosMapeados = eventos.map(evento => ({
+            id: evento.id,
+            titulo: evento.titulo,
+            descricao: evento.descricao || null,
+            data_evento: evento.data_evento,
+            vagas: evento.vagas,
+            vagas_totais: evento.vagas,
+            vagas_disponiveis: evento.vagas_disponiveis,
+            status: evento.status,
+            total_inscricoes: evento.total_inscricoes || 0,
+            total_presentes: evento.total_presentes || 0,
+            taxa_ocupacao: evento.taxa_ocupacao_pct || 0
+        }));
+
+        console.log('✅ Enviando resposta com', eventosMapeados.length, 'eventos');
 
         res.status(200).json({
-            total: results.length,
-            eventos: results
+            total: eventosMapeados.length,
+            eventos: eventosMapeados
         });
     });
 });
@@ -163,28 +229,17 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
 
-    // Verificazr se há inscrições
-    db.query('SELECT COUNT(*) as total FROM inscricoes WHERE evento_id = ?', [id], (err, results) => {
+    // Deletar evento (CASCADE vai remover as inscrições automaticamente se configurado)
+    db.query('DELETE FROM eventos WHERE id = ?', [id], (err, results) => {
         if (err) return res.status(500).json({erro: err.message});
 
-        if(results[0].total > 0){
-            return res.status(409).json({
-                erro: 'Não é possível deletar eventos com inscrições. Cancele as inscrições primeiro.'
-            });
+        if (results.affectedRows === 0){
+            return res.status(404).json({erro: 'Evento não encontrado.'});
         }
 
-        // Deletar evento
-        db.query('DELETE FROM eventos WHERE id = ?', [id], (err, results) => {
-            if (err) return res.status(500).json({erro: err.message});
-
-            if (results.affectedRows === 0){
-                return res.status(404).json({erro: 'Evento não encontrado.'});
-            }
-
-            res.status(200).json({
-                mensagem: 'Evento deletado com sucesso.',
-                id
-            });
+        res.status(200).json({
+            mensagem: 'Evento deletado com sucesso.',
+            id
         });
     });
 });

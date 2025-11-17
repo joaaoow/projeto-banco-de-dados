@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 // Inicializa conexões (db.js conecta MySQL e Mongo)
@@ -15,14 +16,23 @@ const eventosRouter = require('./routes/eventos');
 const inscricoesRouter = require('./routes/inscricoes');
 const feedbacksRouter = require('./routes/feedbacks');
 const materialRouter = require('./routes/material');
+const auditoriaRouter = require('./routes/auditoria');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Rota raiz (sem autenticação)
+// Servir arquivos estáticos (frontend)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Rota raiz (sem autenticação) - redireciona para o frontend
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// API info endpoint
+app.get('/api', (req, res) => {
   res.json({ 
     message: 'API de Eventos - Sistema de Gerenciamento de Eventos de Programação',
     version: '1.0.0',
@@ -32,7 +42,8 @@ app.get('/', (req, res) => {
       eventos: '/eventos',
       inscricoes: '/inscricoes',
       feedbacks: '/feedbacks',
-      material: '/material'
+      material: '/material',
+      auditoria: '/auditoria (admin only)'
     }
   });
 });
@@ -46,6 +57,7 @@ app.use('/eventos', authenticate, eventosRouter);
 app.use('/inscricoes', authenticate, inscricoesRouter);
 app.use('/feedbacks', authenticate, feedbacksRouter);
 app.use('/material', authenticate, materialRouter);
+app.use('/auditoria', authenticate, authorize(1), auditoriaRouter); // Apenas admin
 
 // Middleware de erro 404
 app.use((req, res) => {

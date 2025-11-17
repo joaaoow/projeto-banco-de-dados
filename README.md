@@ -1,111 +1,219 @@
-# Sistema de Gerenciamento de Eventos de Programação
+# 🎯 Sistema de Gestão de Eventos# Sistema de Gerenciamento de Eventos de Programação
 
-Sistema completo para gerenciamento de eventos educacionais sobre programação, desenvolvido como Trabalho Final da disciplina de Laboratório de Banco de Dados. Implementa um banco de dados relacional (MySQL) com recursos avançados (triggers, views, procedures, functions) e um banco NoSQL (MongoDB) para dados semi-estruturados.
 
----
 
-## 📋 Sumário
+Sistema completo de gestão de eventos acadêmicos com autenticação JWT, banco de dados MySQL/MongoDB e interface web moderna.Sistema completo para gerenciamento de eventos educacionais sobre programação, desenvolvido como Trabalho Final da disciplina de Laboratório de Banco de Dados. Implementa um banco de dados relacional (MySQL) com recursos avançados (triggers, views, procedures, functions) e um banco NoSQL (MongoDB) para dados semi-estruturados.
 
-- [Características](#-características)
+
+
+## 📋 Sobre o Projeto---
+
+
+
+Sistema desenvolvido para o **Trabalho Final - Laboratório de Banco de Dados**, implementando todos os requisitos acadêmicos.## 📋 Sumário
+
+
+
+---- [Características](#-características)
+
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
+
+## 🚀 Tecnologias- [Estrutura do Projeto](#-estrutura-do-projeto)
+
 - [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
-- [Configuração](#-configuração)
-- [Execução](#-execução)
-- [Documentação da API](#-documentação-da-api)
-- [Banco de Dados](#-banco-de-dados)
+
+- **Node.js** + **Express.js**- [Instalação](#-instalação)
+
+- **MySQL 8+** - Banco relacional- [Configuração](#-configuração)
+
+- **MongoDB** (opcional)- [Execução](#-execução)
+
+- **JWT** - Autenticação- [Documentação da API](#-documentação-da-api)
+
+- **HTML5/CSS3/JavaScript** - Frontend moderno- [Banco de Dados](#-banco-de-dados)
+
 - [Segurança](#-segurança)
-- [Testes](#-testes)
 
----
+---- [Testes](#-testes)
 
-## 🚀 Características
 
-### Funcionalidades Principais
-- ✅ Cadastro e autenticação de usuários (alunos e organizadores)
-- ✅ Gerenciamento completo de eventos (CRUD)
-- ✅ Sistema de inscrições com controle de vagas
-- ✅ Feedback e avaliações de eventos (MongoDB)
-- ✅ Materiais de apoio aos eventos (MongoDB)
-- ✅ Controle de acesso baseado em grupos
-- ✅ Auditoria de operações críticas
+
+## 📁 Estrutura---
+
+
+
+```## 🚀 Características
+
+projeto-banco-de-dados/
+
+├── server.js              # Servidor principal### Funcionalidades Principais
+
+├── db.js                  # Configuração BD- ✅ Cadastro e autenticação de usuários (alunos e organizadores)
+
+├── database/              # Scripts SQL- ✅ Gerenciamento completo de eventos (CRUD)
+
+│   └── schema.sql        # Schema completo- ✅ Sistema de inscrições com controle de vagas
+
+├── routes/                # API REST- ✅ Feedback e avaliações de eventos (MongoDB)
+
+├── middleware/            # Auth JWT- ✅ Materiais de apoio aos eventos (MongoDB)
+
+├── public/                # Frontend- ✅ Controle de acesso baseado em grupos
+
+└── docs/                  # Documentação- ✅ Auditoria de operações críticas
+
+```
 
 ### Recursos do Banco de Dados
-- **Triggers**: Auditoria automática e controle de vagas
+
+---- **Triggers**: Auditoria automática e controle de vagas
+
 - **Views**: Relatórios e estatísticas pré-processadas
-- **Procedures**: Operações complexas encapsuladas
+
+## 📥 Instalação Rápida- **Procedures**: Operações complexas encapsuladas
+
 - **Functions**: Geração customizada de IDs e cálculos
-- **Índices**: Otimização de consultas frequentes
-- **Usuários e Permissões**: Controle de acesso sem root
+
+```bash- **Índices**: Otimização de consultas frequentes
+
+# 1. Instalar dependências- **Usuários e Permissões**: Controle de acesso sem root
+
+npm install
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+# 2. Configurar MySQL
 
-### Backend
-- **Node.js** (v16+): Runtime JavaScript
+# Execute: database/schema.sql## 🛠 Tecnologias Utilizadas
+
+
+
+# 3. Configurar .env### Backend
+
+DB_PASSWORD=sua_senha- **Node.js** (v16+): Runtime JavaScript
+
 - **Express.js** (v4): Framework web minimalista
-- **JWT**: Autenticação stateless com tokens
-- **bcryptjs**: Hash seguro de senhas
+
+# 4. Iniciar- **JWT**: Autenticação stateless com tokens
+
+npm start- **bcryptjs**: Hash seguro de senhas
+
+```
 
 ### Bancos de Dados
-- **MySQL** (v8+): Banco relacional principal
+
+Acesse: **http://localhost:3000**- **MySQL** (v8+): Banco relacional principal
+
   - Armazena dados estruturados (usuários, eventos, inscrições)
-  - Triggers para auditoria e validações
+
+---  - Triggers para auditoria e validações
+
   - Views para relatórios
-  - Procedures e Functions para lógica de negócio
+
+## ✨ Funcionalidades  - Procedures e Functions para lógica de negócio
+
   
-- **MongoDB** (v5+): Banco NoSQL para dados semi-estruturados
-  - Armazena feedbacks com tags e comentários
-  - Materiais de eventos (arquivos base64, links)
-  - Flexibilidade para dados não padronizados
 
-### Frontend
-- **HTML5/CSS3/JavaScript**: Interface web simples e funcional
-- Localizado na pasta `public/`
+### Participantes- **MongoDB** (v5+): Banco NoSQL para dados semi-estruturados
+
+- Visualizar e inscrever-se em eventos  - Armazena feedbacks com tags e comentários
+
+- Gerenciar inscrições  - Materiais de eventos (arquivos base64, links)
+
+- Avaliar eventos  - Flexibilidade para dados não padronizados
+
+
+
+### Organizadores### Frontend
+
+- Criar e gerenciar eventos- **HTML5/CSS3/JavaScript**: Interface web simples e funcional
+
+- Ver estatísticas- Localizado na pasta `public/`
+
+- Gerenciar participantes
 
 ---
 
-## 📁 Estrutura do Projeto
+### Admin
 
-```
+- Gerenciar usuários## 📁 Estrutura do Projeto
+
+- Logs de auditoria
+
+- Relatórios completos```
+
 projeto-banco-de-dados/
-├── database/
+
+---├── database/
+
 │   └── schema.sql          # Script completo do banco MySQL
-├── middleware/
+
+## 🗄️ Banco de Dados├── middleware/
+
 │   └── auth.js             # Middlewares de autenticação/autorização
-├── models/
-│   ├── mongo/
-│   │   ├── feedbackModel.js   # Schema Mongoose para feedbacks
-│   │   └── materialModel.js   # Schema Mongoose para materiais
-│   └── mysql/              # (opcional) Models para MySQL
-├── routes/
-│   ├── auth.js             # Rotas de autenticação (register, login)
+
+### Recursos Implementados├── models/
+
+- ✅ 4 Triggers (auditoria + vagas)│   ├── mongo/
+
+- ✅ 2 Views (relatórios)│   │   ├── feedbackModel.js   # Schema Mongoose para feedbacks
+
+- ✅ 2 Procedures│   │   └── materialModel.js   # Schema Mongoose para materiais
+
+- ✅ 3 Functions│   └── mysql/              # (opcional) Models para MySQL
+
+- ✅ Índices otimizados├── routes/
+
+- ✅ 3 níveis de usuários (admin, app, readonly)│   ├── auth.js             # Rotas de autenticação (register, login)
+
 │   ├── usuarios.js         # CRUD de usuários
-│   ├── eventos.js          # CRUD de eventos
+
+---│   ├── eventos.js          # CRUD de eventos
+
 │   ├── inscricoes.js       # Gerenciamento de inscrições
-│   ├── feedbacks.js        # Avaliações (MongoDB)
+
+## 🔌 API Principais Endpoints│   ├── feedbacks.js        # Avaliações (MongoDB)
+
 │   └── material.js         # Materiais de apoio (MongoDB)
-├── public/                 # Frontend (HTML/CSS/JS)
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── db.js                   # Conexão com MySQL e MongoDB
-├── server.js               # Configuração do servidor Express
-├── package.json            # Dependências do projeto
-├── .env.example            # Exemplo de variáveis de ambiente
+
+```├── public/                 # Frontend (HTML/CSS/JS)
+
+POST   /usuarios/register│   ├── index.html
+
+POST   /usuarios/login│   ├── styles.css
+
+GET    /eventos│   └── app.js
+
+POST   /eventos├── db.js                   # Conexão com MySQL e MongoDB
+
+GET    /inscricoes/usuario/:id├── server.js               # Configuração do servidor Express
+
+POST   /inscricoes├── package.json            # Dependências do projeto
+
+```├── .env.example            # Exemplo de variáveis de ambiente
+
 ├── .gitignore              # Arquivos ignorados pelo git
-└── README.md               # Este arquivo
 
-```
+---└── README.md               # Este arquivo
 
----
+
+
+## 👨‍💻 Autor```
+
+
+
+**João Pedro**  ---
+
+GitHub: [@joaaoow](https://github.com/joaaoow)
 
 ## ✅ Pré-requisitos
 
+---
+
 - **Node.js** v16+ e npm ([Download](https://nodejs.org/))
-- **MySQL** v8+ ([Download](https://dev.mysql.com/downloads/))
+
+⭐ **Deixe uma estrela se este projeto foi útil!**- **MySQL** v8+ ([Download](https://dev.mysql.com/downloads/))
+
 - **MongoDB** v5+ ([Download](https://www.mongodb.com/try/download/community))
 - **Git** ([Download](https://git-scm.com/))
 

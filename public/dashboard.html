@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Eventos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-calendar-alt"></i>
+                <h2>Sistema de Eventos</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active" data-section="eventos">
+                    <i class="fas fa-calendar-check"></i> Eventos
+                </a>
+                <a href="#" class="nav-link" data-section="inscricoes">
+                    <i class="fas fa-ticket-alt"></i> Minhas Inscrições
+                </a>
+                <a href="#" class="nav-link organizador-only hidden" data-section="meus-eventos">
+                    <i class="fas fa-tasks"></i> Meus Eventos
+                </a>
+                <a href="#" class="nav-link admin-only hidden" data-section="usuarios">
+                    <i class="fas fa-users"></i> Usuários
+                </a>
+                <a href="#" class="nav-link admin-only hidden" data-section="auditoria">
+                    <i class="fas fa-clipboard-list"></i> Auditoria
+                </a>
+                <a href="#" class="nav-link admin-only hidden" data-section="estatisticas">
+                    <i class="fas fa-chart-bar"></i> Estatísticas
+                </a>
+            </div>
+            <div class="nav-user">
+                <i class="fas fa-user-circle"></i>
+                <span id="userName"></span>
+                <button id="btnLogout" class="btn btn-secondary btn-small">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Eventos Section -->
+        <section id="secEventos" class="content-section active">
+            <div class="section-header">
+                <div>
+                    <h2><i class="fas fa-calendar-alt"></i> Eventos Disponíveis</h2>
+                    <p class="section-subtitle">Explore e inscreva-se nos eventos</p>
+                </div>
+                <button id="btnNovoEvento" class="btn btn-primary organizador-only hidden">
+                    <i class="fas fa-plus"></i> Criar Evento
+                </button>
+            </div>
+            
+            <div class="filters">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchEvento" placeholder="Buscar eventos..." class="search-input">
+                </div>
+                <select id="filterCategoria" class="filter-select">
+                    <option value="">Todas as categorias</option>
+                </select>
+            </div>
+
+            <div id="eventosGrid" class="cards-grid">
+                <div class="loading">Carregando eventos...</div>
+            </div>
+        </section>
+
+        <!-- Inscrições Section -->
+        <section id="secInscricoes" class="content-section">
+            <div class="section-header">
+                <div>
+                    <h2><i class="fas fa-ticket-alt"></i> Minhas Inscrições</h2>
+                    <p class="section-subtitle">Gerencie suas inscrições em eventos</p>
+                </div>
+            </div>
+            <div id="inscricoesGrid" class="cards-grid">
+                <div class="loading">Carregando inscrições...</div>
+            </div>
+        </section>
+
+        <!-- Meus Eventos Section (Organizador) -->
+        <section id="secMeusEventos" class="content-section organizador-only hidden">
+            <div class="section-header">
+                <div>
+                    <h2><i class="fas fa-tasks"></i> Meus Eventos Organizados</h2>
+                    <p class="section-subtitle">Gerencie os eventos que você criou</p>
+                </div>
+            </div>
+            <div id="meusEventosGrid" class="cards-grid">
+                <div class="loading">Carregando seus eventos...</div>
+            </div>
+        </section>
+
+        <!-- Usuários Section (Admin) -->
+        <section id="secUsuarios" class="content-section admin-only hidden">
+            <div class="section-header">
+                <div>
+                    <h2><i class="fas fa-users"></i> Gerenciar Usuários</h2>
+                    <p class="section-subtitle">Administre os usuários do sistema</p>
+                </div>
+            </div>
+            <div class="filters">
+                <select id="filterTipoUsuario" class="filter-select">
+                    <option value="">Todos os tipos</option>
+                    <option value="aluno">Alunos</option>
+                    <option value="organizador">Organizadores</option>
+                </select>
+            </div>
+            <div id="usuariosTable" class="table-container">
+                <div class="loading">Carregando usuários...</div>
+            </div>
+        </section>
+
+        <!-- Auditoria Section (Admin) -->
+        <section id="secAuditoria" class="content-section admin-only hidden">
+            <div class="section-header">
+                <h2><i class="fas fa-search"></i> Logs de Auditoria</h2>
+            </div>
+            <div class="filters">
+                <select id="filterTabela" class="filter-select">
+                    <option value="">Todas as tabelas</option>
+                    <option value="usuarios">Usuários</option>
+                    <option value="eventos">Eventos</option>
+                    <option value="inscricoes">Inscrições</option>
+                </select>
+                <select id="filterOperacao" class="filter-select">
+                    <option value="">Todas as operações</option>
+                    <option value="INSERT">INSERT</option>
+                    <option value="UPDATE">UPDATE</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div id="auditoriaTable" class="table-container">
+                <div class="loading">Carregando logs...</div>
+            </div>
+        </section>
+
+        <!-- Estatísticas Section (Admin) -->
+        <section id="secEstatisticas" class="content-section admin-only hidden">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-bar"></i> Estatísticas do Sistema</h2>
+            </div>
+            <div id="estatisticasContainer">
+                <div class="loading">Carregando estatísticas...</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Criar/Editar Evento -->
+    <div id="modalEvento" class="modal">
+        <div class="modal-content modal-form">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modalEventoTitle"><i class="fas fa-calendar-plus"></i> Criar Novo Evento</h3>
+                    <p class="modal-subtitle">Preencha as informações do seu evento</p>
+                </div>
+                <span class="modal-close" data-modal="modalEvento">&times;</span>
+            </div>
+            <form id="formEvento">
+                <input type="hidden" id="eventoId">
+                
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="eventoTitulo">
+                            <i class="fas fa-heading label-icon"></i>
+                            Título do Evento *
+                        </label>
+                        <input type="text" id="eventoTitulo" required placeholder="Ex: Workshop de Python">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventoDescricao">
+                            <i class="fas fa-align-left label-icon"></i>
+                            Descrição
+                        </label>
+                        <textarea id="eventoDescricao" rows="4" placeholder="Descreva o que será abordado no evento..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventoData">
+                                <i class="fas fa-calendar-alt label-icon"></i>
+                                Data e Hora *
+                            </label>
+                            <input type="datetime-local" id="eventoData" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventoVagas">
+                                <i class="fas fa-users label-icon"></i>
+                                Vagas *
+                            </label>
+                            <input type="number" id="eventoVagas" required min="1" placeholder="50">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventoCategoria">
+                            <i class="fas fa-tag label-icon"></i>
+                            Categoria
+                        </label>
+                        <select id="eventoCategoria">
+                            <option value="">Selecione uma categoria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-modal="modalEvento">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes do Evento -->
+    <div id="modalDetalhes" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="detalheTitulo"><i class="fas fa-info-circle"></i> Detalhes do Evento</h3>
+                <span class="modal-close" data-modal="modalDetalhes">&times;</span>
+            </div>
+            <div id="detalheConteudo" class="modal-body">
+                <div class="loading">Carregando detalhes...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmar Inscrição -->
+    <div id="modalInscricao" class="modal">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Confirmar Inscrição</h3>
+                <span class="modal-close" data-modal="modalInscricao">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-content">
+                    <div class="confirm-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <h4 id="confirmEventoTitulo"></h4>
+                    <div class="confirm-info">
+                        <p><strong><i class="fas fa-calendar-alt"></i> Data:</strong> <span id="confirmEventoData"></span></p>
+                        <p><strong><i class="fas fa-user"></i> Organizador:</strong> <span id="confirmEventoOrg"></span></p>
+                        <p><strong><i class="fas fa-users"></i> Vagas:</strong> <span id="confirmEventoVagas"></span></p>
+                    </div>
+                    <p class="confirm-text">Deseja confirmar sua inscrição neste evento?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-modal="modalInscricao">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" id="btnConfirmarInscricao" class="btn btn-success">
+                    <i class="fas fa-check"></i> Confirmar Inscrição
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

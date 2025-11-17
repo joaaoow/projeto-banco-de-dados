@@ -10,9 +10,11 @@ const { JWT_SECRET } = require('../middleware/auth');
  * Body: { nome, email, senha, tipo }
  */
 router.post('/register', async (req, res) => {
-    const { nome, email, senha, tipo } = req.body;
+    const { nome, email, senha, tipo, grupo_id } = req.body;
 
-    if (!nome || !email || !senha || !tipo) {
+    console.log('Dados recebidos:', { nome, email, tipo, grupo_id });
+
+    if (!nome || !email || !senha || !tipo || !grupo_id) {
         return res.status(400).json({ erro: 'Todos os campos são obrigatórios' });
     }
 
@@ -23,9 +25,6 @@ router.post('/register', async (req, res) => {
     try {
         // Hash da senha
         const senhaHash = await bcrypt.hash(senha, 10);
-
-        // Determinar grupo_id baseado no tipo
-        const grupo_id = tipo === 'organizador' ? 2 : 3;
 
         // Gerar ID customizado
         const userId = await new Promise((resolve, reject) => {

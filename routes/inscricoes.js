@@ -4,7 +4,7 @@ const db = require('../db.js');
 
 // CRUD Inscrições
 
-// Criar nova inscrição
+// Criar nova inscrição (usando procedure)
 router.post('/', (req, res) => {
     const { usuario_id, evento_id } = req.body;
 
@@ -12,38 +12,38 @@ router.post('/', (req, res) => {
         return res.status(400).json({erro: 'Usuário e evento são obrigatórios'});
     }
 
-    // verifica se o evento possui e existe vagas
-    db.query('SELECT vagas FROM eventos WHERE id = ?', [evento_id], (err, eventos) => {
-        if(err) return res.status(500).json({erro: err.message});
-        if(eventos.length === 0) return res.status(404).json({erro: 'Evento não encontrado.'});
+    // Usa a procedure que já tem todas as validações
+    db.query('CALL inscrever_usuario_evento(?, ?, @status)', [usuario_id, evento_id], (err, results) => {
+        if (err) {
+            return res.status(500).json({erro: err.message});
+        }
 
-        // Verifica se o usuário já está inscrito
-        db.query('SELECT * FROM inscricoes WHERE usuario_id = ? AND evento_id = ?', [usuario_id, evento_id], (err, inscricoes) => {
+        // Pega o status retornado pela procedure
+        db.query('SELECT @status as status', (err, statusResult) => {
             if (err) return res.status(500).json({erro: err.message});
-            if (inscricoes.length > 0) return res.status(409).json({erro: 'Usuário já inscrito neste evento.'});
 
-            // Conta quantos confirmados já existem
-            db.query('SELECT COUNT(*) AS total FROM inscricoes WHERE evento_id = ? AND status = "confirmado"', [evento_id], (err, count) => {
-                if (err) return res.status(500).json({erro: err.message});
+            const status = statusResult[0].status;
 
-                const ocupadas = count[0].total;
-                if (ocupadas >= eventos[0].vagas) {
-                    return res.status(400).json({erro: 'Evento sem vagas disponíveis.'});
+            // Verifica se houve erro
+            if (status.startsWith('ERRO:')) {
+                const errorMsg = status.replace('ERRO: ', '');
+                
+                // Determina o status code baseado no erro
+                if (errorMsg.includes('não encontrado')) {
+                    return res.status(404).json({erro: errorMsg});
+                } else if (errorMsg.includes('não está aberto') || errorMsg.includes('sem vagas') || errorMsg.includes('já inscrito')) {
+                    return res.status(400).json({erro: errorMsg});
+                } else {
+                    return res.status(500).json({erro: errorMsg});
                 }
+            }
 
-                // Inserir inscrição
-                const query = 'INSERT INTO inscricoes (usuario_id, evento_id, status) VALUES (?, ?, "confirmado")';
-                db.query(query, [usuario_id, evento_id], (err, results) => {
-                    if (err) return res.status(500).json({erro: err.message});
-
-                    res.status(201).json({
-                        mensagem: 'Inscrição realizada com sucesso.',
-                        id: results.insertId,
-                        usuario_id,
-                        evento_id,
-                        status: 'confirmado'
-                    });
-                });
+            // Sucesso
+            res.status(201).json({
+                mensagem: status.replace('SUCESSO: ', ''),
+                usuario_id,
+                evento_id,
+                status: 'confirmado'
             });
         });
     });
@@ -83,7 +83,7 @@ router.get('/usuario/:usuario_id', (req, res) => {
 
         res.status(200).json({
             total: results.length,
-            eventos: results
+            inscricoes: results
         });
     });
 });

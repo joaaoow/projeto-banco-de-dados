@@ -179,6 +179,22 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+// Obter estatísticas dos usuários (usando view)
+router.get('/estatisticas', (req, res) => {
+    const query = 'SELECT * FROM vw_estatisticas_usuarios ORDER BY total_inscricoes DESC';
+
+    db.query(query, (err, results) => {
+        if(err) {
+            return res.status(500).json({erro: err.message});
+        }
+
+        res.status(200).json({ 
+            total: results.length, 
+            estatisticas: results 
+        });
+    });
+});
+
 // Filtrar usuário por tipo
 router.get('/tipo/:tipo', (req, res) => {
     const { tipo } = req.params;

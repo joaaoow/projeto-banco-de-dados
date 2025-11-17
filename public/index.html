@@ -1,62 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Eventos — Portal</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Eventos - Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
-  </head>
-  <body>
-    <header class="header">
-      <div class="container header-inner">
-        <h1 class="logo">Eventos<span class="accent">Pro</span></h1>
-        <nav>
-          <a href="#hero">Início</a>
-          <a href="#eventos">Eventos</a>
-          <a href="#contato">Contato</a>
-        </nav>
-      </div>
-    </header>
-
-    <main>
-      <section id="hero" class="hero">
-        <div class="container hero-inner">
-          <div>
-            <h2>Aprenda, conecte-se e compartilhe conhecimento</h2>
-            <p class="lead">Plataforma de eventos para programadores — participe, envie materiais e dê feedback.</p>
-            <div class="actions">
-              <a class="btn primary" href="#eventos">Explorar eventos</a>
-              <a class="btn ghost" href="#contato">Entrar em contato</a>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <div class="auth-card">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h1>Sistema de Eventos</h1>
+                <p>Gerenciamento de Eventos de Programação</p>
             </div>
-          </div>
-          <div class="hero-card">
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='%23ffffff' rx='12'/></svg>" alt="Ilustração" />
-          </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="form-container active">
+                <h2>Entrar</h2>
+                <form id="formLogin">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginSenha">Senha</label>
+                        <input type="password" id="loginSenha" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+                <p class="toggle-form">
+                    Não tem conta? <a href="#" id="showRegister">Cadastre-se</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="form-container">
+                <h2>Cadastrar</h2>
+                <form id="formRegister">
+                    <div class="form-group">
+                        <label for="registerNome">Nome Completo</label>
+                        <input type="text" id="registerNome" required placeholder="João Silva">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerSenha">Senha</label>
+                        <input type="password" id="registerSenha" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerTipo">Tipo de Usuário</label>
+                        <select id="registerTipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="aluno">Aluno</option>
+                            <option value="organizador">Organizador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerGrupo">Grupo</label>
+                        <select id="registerGrupo" required>
+                            <option value="">Selecione...</option>
+                            <option value="1">Administradores</option>
+                            <option value="2">Organizadores</option>
+                            <option value="3">Participantes</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </form>
+                <p class="toggle-form">
+                    Já tem conta? <a href="#" id="showLogin">Faça login</a>
+                </p>
+            </div>
         </div>
-      </section>
 
-      <section id="eventos" class="section">
-        <div class="container">
-          <h3>Próximos eventos</h3>
-          <div id="event-list" class="grid"></div>
-        </div>
-      </section>
+        <!-- Alert messages -->
+        <div id="alertContainer"></div>
+    </div>
 
-      <section id="contato" class="section small">
-        <div class="container">
-          <h3>Contato</h3>
-          <p>Para dúvidas e testes use as rotas da API (ex.: <code>/eventos</code>, <code>/usuarios</code>).</p>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="container">© <span id="year"></span> EventosPro — Projeto de exemplo</div>
-    </footer>
-
-    <script src="/app.js"></script>
-  </body>
-  </html>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
