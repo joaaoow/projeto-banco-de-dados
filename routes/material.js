@@ -77,4 +77,20 @@ router.put('/:id/download', async(req, res) => {
     }
 });
 
+// Deletar material
+router.delete('/:id', async(req, res) => {
+    try{
+        const material = await Material.findByIdAndDelete(req.params.id);
+        if (!material){
+            return res.status(404).json({success: false, error: "Material não encontrado."});
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Material deletado com sucesso.'
+        });
+    } catch(err){
+        res.status(500).json({success: false, error: err.message});
+    }
+});
+
 module.exports = router;

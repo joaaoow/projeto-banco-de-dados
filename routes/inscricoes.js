@@ -71,7 +71,7 @@ router.get('/', (req, res) => {
 router.get('/usuario/:usuario_id', (req, res) => {
     const{ usuario_id } = req.params;
     const query = `
-    SELECT i.id, e.titulo, e.data_evento, i.status, i.data_inscricao
+    SELECT i.id, i.evento_id, e.titulo, e.data_evento, i.status, i.data_inscricao
     FROM inscricoes i
     INNER JOIN eventos e ON i.evento_id = e.id
     WHERE i.usuario_id = ?

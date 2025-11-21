@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db.js');
 
-/**
- * GET /relatorios/usuarios - Estatísticas de usuários por grupo (usando view)
- */
 router.get('/usuarios', (req, res) => {
     const query = 'SELECT * FROM vw_estatisticas_usuarios ORDER BY nivel_acesso';
     
@@ -18,10 +15,7 @@ router.get('/usuarios', (req, res) => {
     });
 });
 
-/**
- * GET /relatorios/auditoria - Log de auditoria (últimos 100 registros)
- * Query params: ?tabela=eventos&operacao=UPDATE&usuario_id=USR-xxx&limit=50
- */
+
 router.get('/auditoria', (req, res) => {
     const { tabela, operacao, usuario_id, limit } = req.query;
     
@@ -56,10 +50,6 @@ router.get('/auditoria', (req, res) => {
     });
 });
 
-/**
- * GET /relatorios/eventos/:id/ocupacao - Taxa de ocupação de um evento
- * Usa a function calcular_taxa_ocupacao()
- */
 router.get('/eventos/:id/ocupacao', (req, res) => {
     const { id } = req.params;
 
@@ -89,9 +79,7 @@ router.get('/eventos/:id/ocupacao', (req, res) => {
     });
 });
 
-/**
- * GET /relatorios/eventos/disponiveis - Eventos disponíveis com taxa de ocupação
- */
+
 router.get('/eventos/disponiveis', (req, res) => {
     const query = `
         SELECT 
@@ -121,9 +109,7 @@ router.get('/eventos/disponiveis', (req, res) => {
     });
 });
 
-/**
- * GET /relatorios/categorias - Estatísticas por categoria
- */
+
 router.get('/categorias', (req, res) => {
     const query = `
         SELECT 

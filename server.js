@@ -17,6 +17,7 @@ const inscricoesRouter = require('./routes/inscricoes');
 const feedbacksRouter = require('./routes/feedbacks');
 const materialRouter = require('./routes/material');
 const auditoriaRouter = require('./routes/auditoria');
+const categoriasRouter = require('./routes/categorias');
 
 const app = express();
 
@@ -50,6 +51,9 @@ app.get('/api', (req, res) => {
 
 // Rotas públicas (sem autenticação)
 app.use('/auth', authRouter);
+
+// Rotas de categorias (requer autenticação)
+app.use('/categorias', authenticate, categoriasRouter);
 
 // Rotas protegidas (requerem autenticação)
 app.use('/usuarios', authenticate, usuariosRouter);

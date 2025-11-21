@@ -3,10 +3,6 @@ const jwt = require('jsonwebtoken');
 // Secret para JWT (em produção, usar variável de ambiente)
 const JWT_SECRET = process.env.JWT_SECRET || 'chave-secreta-dev-2024';
 
-/**
- * Middleware de autenticação
- * Verifica se o token JWT é válido
- */
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
 
@@ -25,7 +21,7 @@ const authenticate = (req, res, next) => {
 
 /**
  * Middleware de autorização por nível de acesso
- * @param {number} nivelMinimo - Nível mínimo necessário (1=admin, 2=organizador, 3=aluno)
+ * @param {number} nivelMinimo 
  */
 const authorize = (nivelMinimo) => {
     return (req, res, next) => {
@@ -47,6 +43,7 @@ const authorize = (nivelMinimo) => {
  * Middleware de autorização por tipo de usuário
  * @param {Array<string>} tiposPermitidos - Tipos permitidos (admin, organizador, aluno)
  */
+
 const authorizeByType = (tiposPermitidos) => {
     return (req, res, next) => {
         if (!req.usuario) {
@@ -63,9 +60,6 @@ const authorizeByType = (tiposPermitidos) => {
     };
 };
 
-/**
- * Middleware para verificar se usuário é dono do recurso ou admin
- */
 const authorizeOwnerOrAdmin = (getUserIdFromRequest) => {
     return (req, res, next) => {
         if (!req.usuario) {

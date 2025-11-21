@@ -5,10 +5,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db.js');
 const { JWT_SECRET } = require('../middleware/auth');
 
-/**
- * POST /auth/register - Registrar novo usuário
- * Body: { nome, email, senha, tipo }
- */
+
 router.post('/register', async (req, res) => {
     const { nome, email, senha, tipo, grupo_id } = req.body;
 
@@ -55,10 +52,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-/**
- * POST /auth/login - Autenticar usuário
- * Body: { email, senha }
- */
+
 router.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
@@ -129,10 +123,7 @@ router.post('/login', (req, res) => {
     });
 });
 
-/**
- * GET /auth/me - Obter dados do usuário autenticado
- * Requer: Bearer token no header Authorization
- */
+
 router.get('/me', (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
 

@@ -7,18 +7,28 @@ const Feedback = require('../models/mongo/feedbackModel.js')
 // Cria novo feedback
 router.post('/', async(req, res) => {
     try{
+        console.log('📝 Recebendo feedback:', req.body);
+        
         const { evento_id, usuario_id, nota, comentario, tags } = req.body;
-        if(!evento_id || !usuario_id || !nota)
+        
+        console.log('Valores extraídos:', { evento_id, usuario_id, nota, comentario, tags });
+        
+        if(!evento_id || !usuario_id || !nota) {
+            console.log('❌ Validação falhou:', { evento_id, usuario_id, nota });
             return res.status(400).json({erro: 'Evento, usuário e nota são obrigatórios.'});
+        }
 
         const novoFeedback = new Feedback({ evento_id, usuario_id, nota, comentario, tags });
         await novoFeedback.save();
+
+        console.log('✅ Feedback salvo:', novoFeedback);
 
         res.status(201).json({
             mensagem: 'Feedback registrado com sucesso.', 
             data: novoFeedback
         });
     } catch (err){
+        console.error('❌ Erro ao salvar feedback:', err);
         return res.status(500).json({ erro: err.message });
     }
 });

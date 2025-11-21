@@ -8,7 +8,7 @@ const db = require('../db.js');
 router.post('/', (req, res) => {
     const { titulo, descricao, data_evento, vagas, organizador_id, categoria_id } = req.body;
 
-    console.log('📝 Criando evento:', { titulo, descricao, data_evento, vagas, organizador_id, categoria_id });
+    console.log(' Criando evento:', { titulo, descricao, data_evento, vagas, organizador_id, categoria_id });
 
     // Validação dos campos obrigatórios
     if(!titulo || !data_evento || !vagas || !organizador_id){
@@ -154,19 +154,19 @@ router.get('/disponiveis/lista', (req, res) => {
 router.get('/organizador/:organizador_id', (req, res) => {
     const { organizador_id } = req.params;
 
-    console.log('🔍 Buscando eventos do organizador:', organizador_id);
+    console.log(' Buscando eventos do organizador:', organizador_id);
 
     db.query('CALL relatorio_eventos_organizador(?)', [organizador_id], (err, results) => {
         if (err) {
-            console.error('❌ Erro na procedure:', err.message);
+            console.error('Erro na procedure:', err.message);
             return res.status(500).json({erro: err.message});
         }
 
         // Procedures retornam array de arrays
         const eventos = results[0];
         
-        console.log('📊 Eventos encontrados:', eventos.length);
-        console.log('📋 Dados:', eventos);
+        console.log('Eventos encontrados:', eventos.length);
+        console.log('Dados:', eventos);
 
         // Mapear os campos para o formato esperado pelo frontend
         const eventosMapeados = eventos.map(evento => ({
@@ -183,7 +183,7 @@ router.get('/organizador/:organizador_id', (req, res) => {
             taxa_ocupacao: evento.taxa_ocupacao_pct || 0
         }));
 
-        console.log('✅ Enviando resposta com', eventosMapeados.length, 'eventos');
+        console.log(' Enviando resposta com', eventosMapeados.length, 'eventos');
 
         res.status(200).json({
             total: eventosMapeados.length,

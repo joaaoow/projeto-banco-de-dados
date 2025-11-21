@@ -1,25 +1,24 @@
 // API Configuration
 const API_URL = 'http://localhost:3000';
 
-// Get token from localStorage
+
 const getToken = () => localStorage.getItem('token');
 
-// Set token in localStorage
+
 const setToken = (token) => localStorage.setItem('token', token);
 
-// Remove token from localStorage
+
 const removeToken = () => localStorage.removeItem('token');
 
-// Get user from localStorage
 const getUser = () => JSON.parse(localStorage.getItem('user') || 'null');
 
-// Set user in localStorage
+
 const setUser = (user) => localStorage.setItem('user', JSON.stringify(user));
 
-// Remove user from localStorage
+
 const removeUser = () => localStorage.removeItem('user');
 
-// Show alert message
+
 function showAlert(message, type = 'info') {
     const alertContainer = document.getElementById('alertContainer');
     const alert = document.createElement('div');
@@ -35,7 +34,7 @@ function showAlert(message, type = 'info') {
     }, 5000);
 }
 
-// API Request helper
+
 async function apiRequest(endpoint, options = {}) {
     const token = getToken();
     const headers = {
@@ -63,7 +62,6 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-// Auth API
 const AuthAPI = {
     register: (userData) => apiRequest('/auth/register', {
         method: 'POST',
@@ -78,7 +76,7 @@ const AuthAPI = {
     me: () => apiRequest('/auth/me')
 };
 
-// Eventos API
+
 const EventosAPI = {
     getAll: () => apiRequest('/eventos'),
     
@@ -101,7 +99,15 @@ const EventosAPI = {
     })
 };
 
-// Inscrições API
+const CategoriasAPI = {
+    getAll: () => apiRequest('/categorias'),
+    create: (categoria) => apiRequest('/categorias', {
+        method: 'POST',
+        body: JSON.stringify(categoria)
+    })
+};
+
+
 const InscricoesAPI = {
     getAll: () => apiRequest('/inscricoes'),
     
@@ -126,7 +132,7 @@ const InscricoesAPI = {
     })
 };
 
-// Usuários API
+
 const UsuariosAPI = {
     getAll: () => apiRequest('/usuarios'),
     
@@ -146,7 +152,6 @@ const UsuariosAPI = {
     })
 };
 
-// Auditoria API
 const AuditoriaAPI = {
     getAll: (params = {}) => {
         const query = new URLSearchParams(params).toString();
@@ -164,19 +169,28 @@ const AuditoriaAPI = {
     }
 };
 
-// Feedbacks API
 const FeedbacksAPI = {
     getAll: () => apiRequest('/feedbacks'),
     
     getByEvento: (eventoId) => apiRequest(`/feedbacks/evento/${eventoId}`),
     
+    getMedia: (eventoId) => apiRequest(`/feedbacks/evento/${eventoId}/media`),
+    
     create: (feedback) => apiRequest('/feedbacks', {
         method: 'POST',
         body: JSON.stringify(feedback)
+    }),
+    
+    update: (id, feedback) => apiRequest(`/feedbacks/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(feedback)
+    }),
+    
+    delete: (id) => apiRequest(`/feedbacks/${id}`, {
+        method: 'DELETE'
     })
 };
 
-// Material API
 const MaterialAPI = {
     getAll: () => apiRequest('/material'),
     
@@ -187,12 +201,15 @@ const MaterialAPI = {
         body: JSON.stringify(material)
     }),
     
+    incrementDownload: (id) => apiRequest(`/material/${id}/download`, {
+        method: 'PUT'
+    }),
+    
     delete: (id) => apiRequest(`/material/${id}`, {
         method: 'DELETE'
     })
 };
 
-// Format date for display
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
@@ -204,7 +221,6 @@ function formatDate(dateString) {
     });
 }
 
-// Format date for input datetime-local
 function formatDateForInput(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();

@@ -7,9 +7,8 @@
 CREATE DATABASE IF NOT EXISTS eventosdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE eventosdb;
 
--- ============================================================
 -- 1. TABELAS
--- ============================================================
+
 
 -- Tabela de grupos de usuários (controle de permissões)
 CREATE TABLE IF NOT EXISTS grupos_usuarios (
@@ -127,7 +126,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- Function para gerar IDs customizados para eventos (formato: EVT-YYYYMMDD-XXXXX)
+-- Function para gerar IDs customizados para eventos 
 DELIMITER //
 CREATE FUNCTION gerar_id_evento()
 RETURNS VARCHAR(20)
@@ -177,10 +176,6 @@ BEGIN
     RETURN taxa;
 END//
 DELIMITER ;
-
--- ============================================================
--- 3. PROCEDURES
--- ============================================================
 
 -- Procedure para inscrever usuário em evento (com validações)
 DELIMITER //
@@ -268,9 +263,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- ============================================================
--- 4. TRIGGERS
--- ============================================================
+
 
 -- Trigger para auditoria de alterações em usuários
 DELIMITER //
@@ -354,9 +347,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- ============================================================
--- 5. VIEWS
--- ============================================================
+
 
 -- View para listar eventos com informações completas e estatísticas
 CREATE OR REPLACE VIEW vw_eventos_completos AS
@@ -400,45 +391,7 @@ LEFT JOIN eventos e ON u.id = e.organizador_id
 LEFT JOIN inscricoes i ON u.id = i.usuario_id
 GROUP BY g.id, g.nome, g.nivel_acesso;
 
--- ============================================================
--- 6. ÍNDICES (JUSTIFICATIVA)
--- ============================================================
 
-/*
-JUSTIFICATIVA DOS ÍNDICES CRIADOS:
-
-1. idx_email (usuarios): 
-   - Usado frequentemente em login e verificação de unicidade
-   - Melhora performance de queries WHERE email = ?
-
-2. idx_grupo (usuarios): 
-   - JOIN frequente com grupos_usuarios
-   - Filtros por grupo de usuário
-
-3. idx_data_evento (eventos):
-   - Ordenação e filtros por data são comuns
-   - Busca de eventos futuros/passados
-
-4. idx_organizador (eventos):
-   - JOIN com usuarios e filtros por organizador
-   - Relatórios de eventos por organizador
-
-5. idx_vagas_disponiveis (eventos):
-   - Busca de eventos com vagas (WHERE vagas_disponiveis > 0)
-   - Filtro muito usado na listagem de eventos
-
-6. unique_inscricao (inscricoes):
-   - Garante integridade (usuário não pode se inscrever 2x no mesmo evento)
-   - Acelera verificação de inscrição existente
-
-7. idx_status (inscricoes):
-   - Filtros por status de inscrição (confirmado, presente, etc)
-   - Agregações e contagens por status
-*/
-
--- ============================================================
--- 7. DADOS INICIAIS
--- ============================================================
 
 -- Inserir grupos de usuários
 INSERT INTO grupos_usuarios (nome, descricao, nivel_acesso) VALUES
@@ -454,9 +407,7 @@ INSERT INTO categorias (nome, descricao) VALUES
 ('DevOps', 'Infraestrutura, CI/CD e automação'),
 ('Segurança', 'Segurança da informação e ethical hacking');
 
--- ============================================================
--- 8. USUÁRIOS DO BANCO DE DADOS (SEM ROOT)
--- ============================================================
+
 
 -- Criar usuários do banco de dados
 CREATE USER IF NOT EXISTS 'admin_eventos'@'localhost' IDENTIFIED BY 'Admin@2024!';
@@ -476,9 +427,6 @@ GRANT SELECT ON eventosdb.* TO 'readonly_eventos'@'localhost';
 
 FLUSH PRIVILEGES;
 
--- ============================================================
--- FIM DO SCRIPT
--- ============================================================
 
 USE eventosdb;
 SHOW TABLES;
